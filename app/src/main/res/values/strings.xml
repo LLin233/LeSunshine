@@ -2,16 +2,25 @@
 <resources>
 
     <string name="title_activity_detail" translatable="false">Details</string>
-
+    <string name="title_activity_settings" translatable="false">Settings</string>
 
     <string name="app_name">LeSunshine</string>
     <string name="action_settings">Settings</string>
+    <string name="action_maps">Find Location</string>
+    <string name="action_share">Share</string>
     <string name="action_refresh" translatable="false">Refresh</string>
-
-
+    <!--preference : Location -->
     <string name="pref_location_key">location</string>
     <string name="pref_location_label" translatable="false">Location</string>
     <string name="pref_location_default" translatable="false">Fremont,CA</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!--preference : Temperature units -->
+    <string name="pref_units_label">Temperature Units</string>
+    <string name="pref_units_label_metric">Metric</string>
+    <string name="pref_units_label_imperial">Imperial</string>
+    <string name="pref_units_key" translatable="false">units</string>
+    <string name="pref_units_metric" translatable="false">metric</string>
+    <string name="pref_units_imperial" translatable="false">imperial</string>
 
 
 </resources>
