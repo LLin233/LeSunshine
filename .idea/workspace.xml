@@ -1629,23 +1629,23 @@
       <created>1418768169714</created>
       <updated>1418768169714</updated>
     </task>
-    <task id="LOCAL-00001" summary="added a Refresh item in optionsMenu for debugging.">
+    <task id="LOCAL-00001" summary="">
       <created>1419038299938</created>
       <updated>1419038299938</updated>
     </task>
-    <task id="LOCAL-00002" summary="use UriBuilder to avoid hard coding URL">
+    <task id="LOCAL-00002" summary="">
       <created>1419041635926</created>
       <updated>1419041635926</updated>
     </task>
-    <task id="LOCAL-00003" summary="display the real weather data by calling API from openweathermap">
+    <task id="LOCAL-00003" summary="">
       <created>1419060255378</created>
       <updated>1419060255378</updated>
     </task>
-    <task id="LOCAL-00004" summary="now app is able to use GPS feature to find geo location">
+    <task id="LOCAL-00004" summary="">
       <created>1421084498894</created>
       <updated>1421084498894</updated>
     </task>
-    <task id="LOCAL-00005" summary="now app is able to use GPS feature to find geo location">
+    <task id="LOCAL-00005" summary="">
       <created>1421084506264</created>
       <updated>1421084506264</updated>
     </task>
