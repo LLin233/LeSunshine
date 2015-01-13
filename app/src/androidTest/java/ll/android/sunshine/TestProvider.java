@@ -10,9 +10,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
-import ll.android.sunshine.data.WeatherDBHelper;
 import ll.android.sunshine.data.WeatherContract.LocationEntry;
 import ll.android.sunshine.data.WeatherContract.WeatherEntry;
+import ll.android.sunshine.data.WeatherDBHelper;
 
 
 public class TestProvider extends AndroidTestCase {
@@ -25,8 +25,6 @@ public class TestProvider extends AndroidTestCase {
 
     public void testInsertReadDb() {
 
-        // If there's an error in those massive SQL table creation Strings,
-        // errors will be thrown here when you try to get a writable database.
         WeatherDBHelper dbHelper = new WeatherDBHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -39,10 +37,6 @@ public class TestProvider extends AndroidTestCase {
         assertTrue(locationRowId != -1);
         Log.d(LOG_TAG, "New row id: " + locationRowId);
 
-        // Data's inserted.  IN THEORY.  Now pull some out to stare at it and verify it made
-        // the round trip.
-
-        // A cursor is your primary interface to the query results.
         Cursor cursor = db.query(
                 LocationEntry.TABLE_NAME,  // Table to Query
                 null, // all columns
@@ -55,7 +49,6 @@ public class TestProvider extends AndroidTestCase {
 
         TestDB.validateCursor(cursor, testValues);
 
-        // Fantastic.  Now that we have a location, add some weather!
         ContentValues weatherValues = TestDB.createWeatherValues(locationRowId);
 
         long weatherRowId = db.insert(WeatherEntry.TABLE_NAME, null, weatherValues);
