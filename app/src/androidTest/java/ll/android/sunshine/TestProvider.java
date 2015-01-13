@@ -75,32 +75,31 @@ public class TestProvider extends AndroidTestCase {
     public void testGetType() {
         // content://com.example.android.sunshine.app/weather/
         String type = mContext.getContentResolver().getType(WeatherEntry.CONTENT_URI);
-        // vnd.android.cursor.dir/com.example.android.sunshine.app/weather
-        Log.d(LOG_TAG, type);
+        // vnd.android.cursor.dir/ll.android.sunshine/weather
         assertEquals(WeatherEntry.CONTENT_TYPE, type);
 
         String testLocation = "94074";
-        // content://com.example.android.sunshine.app/weather/94074
+        // content://ll.android.sunshine/weather/94074
         type = mContext.getContentResolver().getType(
                 WeatherEntry.buildWeatherLocation(testLocation));
-        // vnd.android.cursor.dir/com.example.android.sunshine.app/weather
+        // vnd.android.cursor.dir/ll.android.sunshine/weather
         assertEquals(WeatherEntry.CONTENT_TYPE, type);
 
         String testDate = "20140612";
-        // content://com.example.android.sunshine.app/weather/94074/20140612
+        // content://ll.android.sunshine/weather/94074/20140612
         type = mContext.getContentResolver().getType(
                 WeatherEntry.buildWeatherLocationWithDate(testLocation, testDate));
-        // vnd.android.cursor.item/com.example.android.sunshine.app/weather
+        // vnd.android.cursor.item/ll.android.sunshine/weather
         assertEquals(WeatherEntry.CONTENT_ITEM_TYPE, type);
 
-        // content://com.example.android.sunshine.app/location/
+        // content://ll.android.sunshine/location/
         type = mContext.getContentResolver().getType(LocationEntry.CONTENT_URI);
-        // vnd.android.cursor.dir/com.example.android.sunshine.app/location
+        // vnd.android.cursor.dir/ll.android.sunshine/location
         assertEquals(LocationEntry.CONTENT_TYPE, type);
 
-        // content://com.example.android.sunshine.app/location/1
+        // content://ll.android.sunshine/location/1
         type = mContext.getContentResolver().getType(LocationEntry.buildLocationUri(1L));
-        // vnd.android.cursor.item/com.example.android.sunshine.app/location
+        // vnd.android.cursor.item/ll.android.sunshine/location
         assertEquals(LocationEntry.CONTENT_ITEM_TYPE, type);
     }
 }
