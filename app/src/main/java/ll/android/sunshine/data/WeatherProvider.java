@@ -14,38 +14,18 @@ import android.net.Uri;
  */
 public class WeatherProvider extends ContentProvider {
 
-    private WeatherDBHelper mOpenHelper;
-    // The URI Matcher used by this content provider.
     private static final UriMatcher sUriMatcher = buildUriMatcher();
+    private WeatherDBHelper mOpenHelper;
 
-
-    // For each type of URI you want to add, create a corresponding code.
     private static final int WEATHER = 100;
     private static final int WEATHER_WITH_LOCATION = 101;
     private static final int WEATHER_WITH_LOCATION_AND_DATE = 102;
     private static final int LOCATION = 300;
     private static final int LOCATION_ID = 301;
 
-    private static UriMatcher buildUriMatcher() {
-
-        final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
-        final String authority = WeatherContract.CONTENT_AUTHORITY;
-
-
-        matcher.addURI(authority, WeatherContract.PATH_WEATHER, WEATHER);
-        matcher.addURI(authority, WeatherContract.PATH_WEATHER + "/*", WEATHER_WITH_LOCATION);
-        matcher.addURI(authority, WeatherContract.PATH_WEATHER + "/*/*", WEATHER_WITH_LOCATION_AND_DATE);
-
-        matcher.addURI(authority, WeatherContract.PATH_LOCATION, LOCATION);
-        matcher.addURI(authority, WeatherContract.PATH_LOCATION + "/#", LOCATION_ID);
-
-        return matcher;
-    }
-
-    //provided data from join table
     private static final SQLiteQueryBuilder sWeatherByLocationSettingQueryBuilder;
 
-    static {
+    static{
         sWeatherByLocationSettingQueryBuilder = new SQLiteQueryBuilder();
         sWeatherByLocationSettingQueryBuilder.setTables(
                 WeatherContract.WeatherEntry.TABLE_NAME + " INNER JOIN " +
@@ -57,12 +37,13 @@ public class WeatherProvider extends ContentProvider {
     }
 
     private static final String sLocationSettingSelection =
-            WeatherContract.LocationEntry.TABLE_NAME +
+            WeatherContract.LocationEntry.TABLE_NAME+
                     "." + WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? ";
     private static final String sLocationSettingWithStartDateSelection =
-            WeatherContract.LocationEntry.TABLE_NAME +
+            WeatherContract.LocationEntry.TABLE_NAME+
                     "." + WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? AND " +
                     WeatherContract.WeatherEntry.COLUMN_DATETEXT + " >= ? ";
+
     private static final String sLocationSettingAndDaySelection =
             WeatherContract.LocationEntry.TABLE_NAME +
                     "." + WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? AND " +
@@ -108,11 +89,30 @@ public class WeatherProvider extends ContentProvider {
         );
     }
 
+    private static UriMatcher buildUriMatcher() {
+        // I know what you're thinking.  Why create a UriMatcher when you can use regular
+        // expressions instead?  Because you're not crazy, that's why.
+
+        // All paths added to the UriMatcher have a corresponding code to return when a match is
+        // found.  The code passed into the constructor represents the code to return for the root
+        // URI.  It's common to use NO_MATCH as the code for this case.
+        final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
+        final String authority = WeatherContract.CONTENT_AUTHORITY;
+
+        // For each type of URI you want to add, create a corresponding code.
+        matcher.addURI(authority, WeatherContract.PATH_WEATHER, WEATHER);
+        matcher.addURI(authority, WeatherContract.PATH_WEATHER + "/*", WEATHER_WITH_LOCATION);
+        matcher.addURI(authority, WeatherContract.PATH_WEATHER + "/*/*", WEATHER_WITH_LOCATION_AND_DATE);
+
+        matcher.addURI(authority, WeatherContract.PATH_LOCATION, LOCATION);
+        matcher.addURI(authority, WeatherContract.PATH_LOCATION + "/#", LOCATION_ID);
+
+        return matcher;
+    }
 
     @Override
     public boolean onCreate() {
         mOpenHelper = new WeatherDBHelper(getContext());
-
         return true;
     }
 
@@ -124,7 +124,8 @@ public class WeatherProvider extends ContentProvider {
         Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
             // "weather/*/*"
-            case WEATHER_WITH_LOCATION_AND_DATE: {
+            case WEATHER_WITH_LOCATION_AND_DATE:
+            {
                 retCursor = getWeatherByLocationSettingAndDate(uri, projection, sortOrder);
                 break;
             }
@@ -182,6 +183,7 @@ public class WeatherProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
+
         // Use the Uri Matcher to determine what kind of URI this is.
         final int match = sUriMatcher.match(uri);
 
@@ -210,7 +212,7 @@ public class WeatherProvider extends ContentProvider {
         switch (match) {
             case WEATHER: {
                 long _id = db.insert(WeatherContract.WeatherEntry.TABLE_NAME, null, values);
-                if (_id > 0)
+                if ( _id > 0 )
                     returnUri = WeatherContract.WeatherEntry.buildWeatherUri(_id);
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
@@ -218,7 +220,7 @@ public class WeatherProvider extends ContentProvider {
             }
             case LOCATION: {
                 long _id = db.insert(WeatherContract.LocationEntry.TABLE_NAME, null, values);
-                if (_id > 0)
+                if ( _id > 0 )
                     returnUri = WeatherContract.LocationEntry.buildLocationUri(_id);
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
@@ -256,7 +258,8 @@ public class WeatherProvider extends ContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+    public int update(
+            Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
         int rowsUpdated;
@@ -277,5 +280,31 @@ public class WeatherProvider extends ContentProvider {
             getContext().getContentResolver().notifyChange(uri, null);
         }
         return rowsUpdated;
+    }
+
+    @Override
+    public int bulkInsert(Uri uri, ContentValues[] values) {
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        switch (match) {
+            case WEATHER:
+                db.beginTransaction();
+                int returnCount = 0;
+                try {
+                    for (ContentValues value : values) {
+                        long _id = db.insert(WeatherContract.WeatherEntry.TABLE_NAME, null, value);
+                        if (_id != -1) {
+                            returnCount++;
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+                getContext().getContentResolver().notifyChange(uri, null);
+                return returnCount;
+            default:
+                return super.bulkInsert(uri, values);
+        }
     }
 }
