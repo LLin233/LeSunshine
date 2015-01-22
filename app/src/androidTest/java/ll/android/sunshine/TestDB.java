@@ -18,6 +18,8 @@ import ll.android.sunshine.data.WeatherContract.WeatherEntry;
  */
 public class TestDB extends AndroidTestCase {
     public static final String LOG_TAG = TestDB.class.getSimpleName();
+    static final String TEST_LOCATION = "99705";
+    static final String TEST_DATE = "20141205";
 
     public void testCreateDb() throws Throwable {
         mContext.deleteDatabase(WeatherDBHelper.DATABASE_NAME);
@@ -29,8 +31,6 @@ public class TestDB extends AndroidTestCase {
 
     public void testInsertReadDb() {
 
-        // If there's an error in those massive SQL table creation Strings,
-        // errors will be thrown here when you try to get a writable database.
         WeatherDBHelper dbHelper = new WeatherDBHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -43,8 +43,6 @@ public class TestDB extends AndroidTestCase {
         assertTrue(locationRowId != -1);
         Log.d(LOG_TAG, "New row id: " + locationRowId);
 
-        // Data's inserted.  IN THEORY.  Now pull some out to stare at it and verify it made
-        // the round trip.
 
         // A cursor is your primary interface to the query results.
         Cursor cursor = db.query(
