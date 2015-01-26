@@ -98,6 +98,7 @@ public class ForecastFragment extends Fragment {
 
     private void updateWeather() {
         String location = Utility.getPreferredLocation(getActivity());
+        //it os an aysnTask that we use to process those time-cosuming tasks and update UI thread.
         new FetchWeatherTask(getActivity(), mForecastAdapter).execute(location);
     }
 
